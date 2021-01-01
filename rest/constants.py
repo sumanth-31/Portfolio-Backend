@@ -1,0 +1,5 @@
+DEFAULT_COLLECTION="article"
+DEFAULT_TAG="general"
+DEFAULT_PRIVACY="public"
+PRIVACY_CLASSES=["public","private"]
+COOKIE_TIMEOUT=15*24*60*60
