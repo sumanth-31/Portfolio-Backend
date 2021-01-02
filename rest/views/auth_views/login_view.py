@@ -1,18 +1,18 @@
 import json
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.contrib.auth import authenticate
+from rest_framework.views import APIView
 
 # Create your views here.
+from rest.utils import bad_request
 
-
-@csrf_exempt
-def login(request):
-    if request.method != "POST":
-        return HttpResponseBadRequest("", content_type="application/json")
-    user_data = json.loads(request.body)
-    user = authenticate(username=user_data["email"], password=user_data["password"])
-    if user is None:
-        return HttpResponse("Invalid credentials", "application/json", status=422)
-    response_data = json.dumps({"token": user.token})
-    return HttpResponse(response_data, "application/json")
+class Login(APIView):
+    def post(self,request):
+        user_data = json.loads(request.body)
+        email=user_data["email"]
+        password=user_data["password"]
+        user = authenticate(email=email,password=password)
+        if user is None:
+            return bad_request("Invalid credentials")
+        response_data = {"token": user.token}
+        return JsonResponse(response_data)

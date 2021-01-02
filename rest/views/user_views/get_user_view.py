@@ -1,22 +1,29 @@
-import json
-from django.http import HttpResponse
+from django.http import JsonResponse
+from rest_framework.views import APIView, Request
 from rest.models import User
+from rest.utils import bad_request, get_user_details
 
 
-def get_user(request):
-    user = User.objects.first()
-    profile_pic_url = request.build_absolute_uri("")
-    if user.profile_pic:
-        profile_pic_url = request.build_absolute_uri(user.profile_pic.url)
-    resume_url = request.build_absolute_uri("")
-    if resume_url:
-        request.build_absolute_uri(user.resume.url)
-    response_data = {
-        "user": {
-            "name": user.name,
-            "email": user.email,
-            "image": profile_pic_url,
-            "resume": resume_url,
+class GetUser(APIView):
+    def get(self, request: Request):
+        user: User = request.user
+        request_data = request.GET
+        self_profile = request_data.get("self", None)
+        if self_profile and self_profile == "true":
+            if user.is_anonymous:
+                return bad_request("User isn't logged in. Cannot fetch self profile")
+            response_data = {
+                "user": get_user_details(request, user),
+            }
+            return JsonResponse(response_data)
+        user_id = request_data.get("user_id")
+        if user_id is None:
+            return bad_request("user_id cannot be empty")
+        try:
+            user = User.objects.get(id=user_id)
+        except:
+            return bad_request("user not found")
+        response_data = {
+            "user": get_user_details(request, user)
         }
-    }
-    return HttpResponse(json.dumps(response_data), "application/json")
+        return JsonResponse(response_data)

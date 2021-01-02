@@ -1,33 +1,27 @@
-import json
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 
-from rest_framework.views import APIView
+from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
-from rest.models import Post, Collection
+from rest.models import Collection, User
+from rest.utils import bad_request
 
 
 class DeleteCollection(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
+    def get(self, request: Request):
+        user: User = request.user
         collection = request.GET.get("collection")
-        tag = request.GET.get("tag")
         if collection is None:
-            response_data = {"message": "collection cannot be empty"}
-            return HttpResponseBadRequest(json.dumps(response_data), "application/json")
+            return bad_request("collection cannot be empty")
         try:
-            if tag is None:
-                posts = Collection.objects.get(name=collection)
-            else:
-                posts = Post.objects.filter(collection=collection, tag=tag)
-
+            collection_obj: Collection = Collection.objects.get(
+                id=collection, user=user)
+            collection_obj.delete()
         except:
-            response_data = {"message": "collection or tag not found"}
-            return HttpResponseBadRequest(json.dumps(response_data), "application/json")
-        posts.delete()
+            return bad_request("collection not found")
         response_data = {
             "collection": collection,
-            "tag": tag,
-            "message": "Collection in tag successfully deleted",
+            "message": "Collection successfully deleted",
         }
-        return HttpResponse(json.dumps(response_data), "application/json")
+        return JsonResponse(response_data)

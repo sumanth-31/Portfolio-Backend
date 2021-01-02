@@ -19,44 +19,50 @@ from django.conf.urls.static import static
 from django.urls import path
 
 from rest.views import (
-    add_user,
-    login,
+    AddProject,
     AddPost,
-    is_authenticated,
-    get_posts,
+    AddUser,
+    ChangePassword,
     DeletePost,
     DeleteCollection,
-    UploadCollectionImage,
     DeleteTag,
-    get_collections,
-    get_tags,
-    ChangePassword,
+    GetCollections,
+    GetPosts,
+    GetProjects,
+    GetTags,
+    GetUser,
+    is_authenticated,
+    Login,
+    UploadCollectionImage,
     UploadProfilePic,
+    UploadProjectImage,
     UploadResume,
     UploadTagImage,
-    get_user,
-    AddProject,
+
 )
 
 urlpatterns = [
-    path("add_user/", add_user),
+    path("add_user/", AddUser.as_view()),
     path("admin/", admin.site.urls),
-    path("login/", login),
+    path("login/", Login.as_view()),
     path("add_post/", AddPost.as_view()),
     path("is_auth/", is_authenticated),
-    path("posts/", get_posts),
+    path("posts/", GetPosts.as_view()),
     path("delete_post/", DeletePost.as_view()),
     path("delete_collection/", DeleteCollection.as_view()),
     path("upload/collection_image/", UploadCollectionImage.as_view()),
     path("upload/tag_image/", UploadTagImage.as_view()),
     path("delete_tag/", DeleteTag.as_view()),
-    path("collections/", get_collections),
-    path("tags/", get_tags),
+    path("collections/", GetCollections.as_view()),
+    path("tags/", GetTags.as_view()),
     path("change_password/", ChangePassword.as_view()),
-    path("profile_pic/", UploadProfilePic.as_view()),
+    path("upload/profile_pic/", UploadProfilePic.as_view()),
     path("upload/resume/", UploadResume.as_view()),
-    path("user/", get_user),
+    path("user/", GetUser.as_view()),
     path("upload/project/", AddProject.as_view()),
+    path("upload/project_image/", UploadProjectImage.as_view()),
+    path("projects/", GetProjects.as_view())
 ]
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

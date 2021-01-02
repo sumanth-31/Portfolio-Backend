@@ -1,26 +1,23 @@
-import json
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 
-from rest_framework.views import APIView
+from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
+from rest.models import User
+from rest.utils import bad_request, get_user_details
 
 
 class UploadProfilePic(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def post(self, request: Request):
         image = request.FILES.get("profile_pic")
         if image is None:
-            return HttpResponseBadRequest("Image is required", "application/json")
-        user = request.user
-        user.image = image
+            return bad_request("Image is required")
+        user: User = request.user
+        user.profile_pic = image
         user.save()
         response_data = {
-            "user": {
-                "name": user.name,
-                "email": user.email,
-                "image": request.build_absolute_uri(user.image.url),
-            },
+            "user": get_user_details(request, user),
             "message": "Successfully updated profile pic",
         }
-        return HttpResponse(json.dumps(response_data), "application/json")
+        return JsonResponse(response_data)

@@ -9,3 +9,4 @@ class Post(models.Model):
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     privacy=models.CharField(max_length=20,default="public")
+    title=models.TextField()
