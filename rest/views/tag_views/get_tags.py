@@ -3,6 +3,7 @@ from django.core.paginator import Page, Paginator
 from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
 from rest.models import Tag, User
+from rest.utils import meta_details_generator
 
 
 class GetTags(APIView):
@@ -31,10 +32,7 @@ class GetTags(APIView):
                 image_url = request.build_absolute_uri(image_url_raw)
                 curr_tag["image"] = image_url
             query_tags.append(curr_tag)
-        meta = {
-            "currPage": page_obj.number,
-            "pages_count": paginator.num_pages,
-            "items_count": paginator.count,
-        }
+        meta = meta_details_generator(
+            page_obj.number, paginator.num_pages, paginator.count)
         response_data = {"tags": query_tags, "meta": meta}
         return JsonResponse(response_data)

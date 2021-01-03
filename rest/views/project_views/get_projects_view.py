@@ -3,6 +3,7 @@ from django.core.paginator import Paginator, Page
 from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
 from rest.models import User, Project
+from rest.utils import meta_details_generator
 
 
 class GetProjects(APIView):
@@ -28,7 +29,10 @@ class GetProjects(APIView):
                 curr_project["image"] = request.build_absolute_uri(
                     image_url_raw)
             project_list.append(curr_project)
+        meta = meta_details_generator(
+            page_obj.number, paginator.num_pages, paginator.count)
         response_data = {
-            "projects": project_list
+            "projects": project_list,
+            "meta": meta
         }
         return JsonResponse(response_data)
