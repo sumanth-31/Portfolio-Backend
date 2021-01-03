@@ -1,26 +1,23 @@
-import json
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 
-from rest_framework.views import APIView
+from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
+from rest.utils import bad_request, get_user_details
+from rest.models import User
 
 
 class UploadResume(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def post(self, request: Request):
         resume = request.FILES.get("resume")
         if resume is None:
-            return HttpResponseBadRequest("Resume is required", "application/json")
-        user = request.user
+            return bad_request("Resume is required")
+        user: User = request.user
         user.resume = resume
         user.save()
         response_data = {
-            "user": {
-                "name": user.name,
-                "email": user.email,
-                "resume": request.build_absolute_uri(user.resume.url),
-            },
+            "user": get_user_details(request, user),
             "message": "Successfully updated resume",
         }
-        return HttpResponse(json.dumps(response_data), "application/json")
+        return JsonResponse(response_data)

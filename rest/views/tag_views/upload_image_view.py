@@ -1,26 +1,26 @@
-import json
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http.response import JsonResponse
 
-from rest_framework.views import APIView
+from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
 
 from rest.models import Tag
+from rest.utils import bad_request
 
 
 class UploadTagImage(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
-        collection = request.POST["tag"]
+    def post(self, request: Request):
+        tag = request.POST.get("tag")
         image = request.FILES.get("tag_image")
-        if collection is None:
-            return HttpResponseBadRequest("Tag cannot be empty", "application/json")
+        if tag is None:
+            return bad_request("Tag cannot be empty")
         if image is None:
-            return HttpResponseBadRequest("Image is required", "application/json")
+            return bad_request("Image is required")
         try:
-            tag_obj = Tag.objects.get(name=collection)
+            tag_obj = Tag.objects.get(id=tag)
         except:
-            return HttpResponseBadRequest("Collection not found", "application/json")
+            return bad_request("Tag not found")
         print(image)
         tag_obj.image = image
         tag_obj.save()
@@ -31,4 +31,4 @@ class UploadTagImage(APIView):
             },
             "message": "Successfully uploaded image for tag",
         }
-        return HttpResponse(json.dumps(response_data), "application/json")
+        return JsonResponse(response_data)

@@ -1,45 +1,38 @@
 import json
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 
 # Create your views here.
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-
-from rest.models import Post, Collection, Tag
-
+from rest_framework.views import APIView,Request
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest.models import Post, Collection, Tag, User
+from rest.utils import *
+from rest.constants import * # pylint: disable=unused-wildcard-import
 
 class AddPost(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        user_id=request.user.id
-        payload = json.loads(request.body)
-        collection = payload.get("collection")
-        tag = payload.get("tag")
+    permission_classes=(IsAuthenticatedOrReadOnly,)
+    def post(self, request:Request):
+        user:User=request.user
+        payload= json.loads(request.body)
+        collection = payload.get("collection",DEFAULT_COLLECTION)
+        tag = payload.get("tag",DEFAULT_TAG)
+        privacy= payload.get("privacy",DEFAULT_PRIVACY)
         content = payload.get("content")
-        if content is None or not content:
-            response_data = {"message": "Content of post cannot be empty"}
-            return HttpResponseBadRequest(json.dumps(response_data), "application/json")
-        if collection is None:
-            collection = "article"
-        if tag is None:
-            tag = "general"
-        collection_obj = Collection(name=collection)
-        collection_obj.save()
-        tag_obj = Tag(name=tag)
-        tag_obj.save()
-        post = Post.objects.create(user=request.user,
-            content=content, collection=collection_obj, tag=tag_obj
+        title=payload.get("title")
+        if content is None:
+            return bad_request("Content of post cannot be empty")
+        if privacy not in PRIVACY_CLASSES:
+            return bad_request("invalid privacy value")
+        if title is None:
+            title=""
+        collection_obj = Collection.objects.get_or_create(name=collection,user=user)[0]
+        tag_obj = Tag.objects.get_or_create(name=tag,user=user)[0]
+        post = Post(user=user,
+            content=content, collection=collection_obj, tag=tag_obj,privacy=privacy,title=title
         )
         post.save()
+        dictionary_post=object_to_dictionary(post)
         response_data = {
-            "post": {
-                "user_id":user_id,
-                "post_id": post.post_id,
-                "content": post.content,
-                "collection": collection,
-                "tag": tag,
-            },
+            "post": dictionary_post,
             "message": "Added post"
         }
-        return HttpResponse(json.dumps(response_data), "application/json")
+        return JsonResponse(response_data)
