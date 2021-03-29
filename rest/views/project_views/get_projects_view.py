@@ -11,8 +11,8 @@ class GetProjects(APIView):
 
     def get(self, request: Request):
         user: User = request.user
-        page = request.POST.get("page", 1)
-        per_page = request.POST.get("per_page", 10)
+        page = request.GET.get("page", 1)
+        per_page = request.GET.get("per_page", 10)
         project_objects = Project.objects.all().filter(user=user)
         paginator = Paginator(project_objects, per_page)
         page_obj: Page = paginator.get_page(page)
