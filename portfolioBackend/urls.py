@@ -38,7 +38,7 @@ from rest.views import (
     UploadProjectImage,
     UploadResume,
     UploadTagImage,
-
+    UpdateProject
 )
 
 urlpatterns = [
@@ -61,7 +61,8 @@ urlpatterns = [
     path("user/", GetUser.as_view()),
     path("upload/project/", AddProject.as_view()),
     path("upload/project_image/", UploadProjectImage.as_view()),
-    path("projects/", GetProjects.as_view())
+    path("projects/", GetProjects.as_view()),
+    path("update/project/", UpdateProject.as_view())
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
