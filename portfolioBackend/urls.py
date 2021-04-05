@@ -35,7 +35,6 @@ from rest.views import (
     Login,
     UploadCollectionImage,
     UploadProfilePic,
-    UploadProjectImage,
     UploadResume,
     UploadTagImage,
     UpdateProject
@@ -60,7 +59,6 @@ urlpatterns = [
     path("upload/resume/", UploadResume.as_view()),
     path("user/", GetUser.as_view()),
     path("upload/project/", AddProject.as_view()),
-    path("upload/project_image/", UploadProjectImage.as_view()),
     path("projects/", GetProjects.as_view()),
     path("update/project/", UpdateProject.as_view())
 ]
