@@ -4,19 +4,24 @@ from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
 from rest.models import User, Project
 from rest.utils import meta_details_generator
-from rest.utils import bad_request
+from rest.utils import bad_request, unauthorized_request
 
 
 class GetProjects(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def get(self, request: Request):
         user: User = request.user
         project_id = request.GET.get("project_id", None)
         page = request.GET.get("page", 1)
         per_page = request.GET.get("per_page", 10)
+        user_id = request.GET.get("user_id", None)
+        if user_id:
+            user_list = User.objects.all().filter(id=user_id)
+            if not user_list:
+                return bad_request("No Such User Exists!")
+            user = user_list[0]
+        if user.is_anonymous:
+            return unauthorized_request("Kindly login or provide a user_id query parameter")
         project_objects = Project.objects.all().filter(user=user)
-        print(project_id)
         if (project_id):
             projectSet = project_objects.filter(id=project_id)
             if not projectSet:
