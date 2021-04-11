@@ -11,18 +11,9 @@ class GetTags(APIView):
 
     def get(self, request: Request):
         user: User = request.user
-        page = 1
-        per_page = 10
-        request_data = request.GET
-        if request_data.get("page"):
-            page = request_data["page"]
-        if request_data.get("per_page"):
-            per_page = request_data["per_page"]
         tags = Tag.objects.filter(user=user)
-        paginator: Paginator = Paginator(tags, per_page)
-        page_obj: Page = paginator.get_page(page)
         query_tags = []
-        for tag in page_obj.object_list:
+        for tag in tags:
             curr_tag = {
                 "name": tag.name,
                 "id": tag.id
@@ -32,7 +23,5 @@ class GetTags(APIView):
                 image_url = request.build_absolute_uri(image_url_raw)
                 curr_tag["image"] = image_url
             query_tags.append(curr_tag)
-        meta = meta_details_generator(
-            page_obj.number, paginator.num_pages, paginator.count)
-        response_data = {"tags": query_tags, "meta": meta}
+        response_data = {"tags": query_tags}
         return JsonResponse(response_data)
