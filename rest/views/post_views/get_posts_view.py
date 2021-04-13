@@ -20,7 +20,7 @@ class GetPosts(APIView):
         collection = request_data.get("collection")
         tag = request_data.get("tag")
         search_query = request_data.get("search_query", "")
-        posts = Post.objects.all().filter(user=user, title__contains=search_query)
+        posts = Post.objects.all().filter(user=user, title__icontains=search_query)
         if collection is not None:
             posts = posts.filter(collection=collection)
         if tag is not None:
