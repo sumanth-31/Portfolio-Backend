@@ -37,6 +37,7 @@ from rest.views import (
     UploadProfilePic,
     UploadResume,
     UploadTagImage,
+    UpdatePost,
     UpdateProject
 )
 
@@ -60,7 +61,8 @@ urlpatterns = [
     path("user/", GetUser.as_view()),
     path("upload/project/", AddProject.as_view()),
     path("projects/", GetProjects.as_view()),
-    path("update/project/", UpdateProject.as_view())
+    path("update/project/", UpdateProject.as_view()),
+    path("update/post/", UpdatePost.as_view())
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
