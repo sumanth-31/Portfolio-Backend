@@ -6,26 +6,34 @@ from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
 
 from rest.models import Post, User
-from rest.utils import meta_details_generator, bad_request
+from rest.utils import meta_details_generator, bad_request, unauthorized_request, invalid_user
 from rest.convertors import post_to_json
 
 
 class GetPosts(APIView):
-    permission_classes = (IsAuthenticated,)
 
     def get(self, request: Request):
         user: User = request.user
         request_data = request.GET
         post_id = request_data.get("post_id", None)
-        userPosts = Post.objects.all().filter(user=user)
+        user_id = request_data.get("user_id", None)
+        if user_id:
+            user_list = User.objects.all().filter(id=user_id)
+            if not user_list:
+                return invalid_user()
+            user = user_list[0]
+        posts = Post.objects.all()
         if post_id:
-            post_list = userPosts.filter(post_id=post_id)
+            post_list = posts.filter(post_id=post_id)
             if not post_list:
                 return bad_request("No Such Post Exists!")
             response_data = {
                 "post": post_to_json(post_list[0])
             }
             return JsonResponse(response_data)
+        if user.is_anonymous:
+            return unauthorized_request()
+        userPosts = posts.filter(user=user)
         page = request_data.get("page", 1)
         per_page = request_data.get("per_page", 10)
         collection = request_data.get("collection")

@@ -4,7 +4,7 @@ from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
 from rest.models import User, Project
 from rest.utils import meta_details_generator
-from rest.utils import bad_request, unauthorized_request
+from rest.utils import bad_request, unauthorized_request, invalid_user
 
 
 class GetProjects(APIView):
@@ -17,14 +17,9 @@ class GetProjects(APIView):
         if user_id:  # projects of specific users are requested
             user_list = User.objects.all().filter(id=user_id)
             if not user_list:
-                return bad_request("No Such User Exists!")
+                return invalid_user()
             user = user_list[0]
-        # If project_id is not there and user isn't logged in or specified, we don't know which user's projects are requested
-        if (not project_id) and user.is_anonymous:
-            return unauthorized_request("Kindly login or provide a user_id query parameter")
         project_objects = Project.objects.all()
-        if not user.is_anonymous:
-            project_objects = project_objects.filter(user=user)
         if (project_id):
             projectSet = project_objects.filter(id=project_id)
             if not projectSet:
@@ -42,6 +37,9 @@ class GetProjects(APIView):
                     image_url_raw)
             response_data = {"project": curr_project}
             return JsonResponse(response_data)
+        if user.is_anonymous:
+            return unauthorized_request()
+        project_objects = project_objects.filter(user=user)
         paginator = Paginator(project_objects, per_page)
         page_obj: Page = paginator.get_page(page)
         project_list = []
