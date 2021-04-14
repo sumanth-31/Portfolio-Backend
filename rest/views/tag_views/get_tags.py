@@ -11,7 +11,11 @@ class GetTags(APIView):
 
     def get(self, request: Request):
         user: User = request.user
+        request_data = request.GET
+        search_query = request_data.get("search_query", None)
         tags = Tag.objects.filter(user=user)
+        if search_query:
+            tags = tags.filter(name__icontains=search_query)
         query_tags = []
         for tag in tags:
             curr_tag = {

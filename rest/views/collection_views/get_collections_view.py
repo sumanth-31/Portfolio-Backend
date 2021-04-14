@@ -11,9 +11,13 @@ class GetCollections(APIView):
 
     def get(self, request: Request):
         user: User = request.user
+        request_data = request.GET
+        search_query = request_data.get("search_query")
         collections = Collection.objects.filter(user=user).order_by(
             "name"
         )
+        if search_query:
+            collections = collections.filter(name__icontains=search_query)
         query_collections = []
         for collection_obj in collections:
             curr_collection = {
