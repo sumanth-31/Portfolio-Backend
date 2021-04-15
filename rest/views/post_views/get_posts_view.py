@@ -17,12 +17,13 @@ class GetPosts(APIView):
         request_data = request.GET
         post_id = request_data.get("post_id", None)
         user_id = request_data.get("user_id", None)
+        posts = Post.objects.all()
         if user_id:
             user_list = User.objects.all().filter(id=user_id)
             if not user_list:
                 return invalid_user()
             user = user_list[0]
-        posts = Post.objects.all()
+            posts = posts.filter(privacy="public")
         if post_id:
             post_list = posts.filter(post_id=post_id)
             if not post_list:
