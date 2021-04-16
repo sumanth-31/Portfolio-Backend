@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest.models import Post, Collection, Tag, User
 from rest.utils import bad_request, object_to_dictionary
 from rest.constants import *  # pylint: disable=unused-wildcard-import
+from rest.convertors import post_to_json
 
 
 class AddPost(APIView):
@@ -33,7 +34,7 @@ class AddPost(APIView):
                     content=content, collection=collection_obj, tag=tag_obj, privacy=privacy, title=title
                     )
         post.save()
-        dictionary_post = object_to_dictionary(post)
+        dictionary_post = post_to_json(post)
         response_data = {
             "post": dictionary_post,
             "message": "Added post"

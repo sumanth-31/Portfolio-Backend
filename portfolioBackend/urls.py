@@ -45,7 +45,7 @@ urlpatterns = [
     path("add_user/", AddUser.as_view()),
     path("admin/", admin.site.urls),
     path("login/", Login.as_view()),
-    path("add_post/", AddPost.as_view()),
+    path("upload/post/", AddPost.as_view()),
     path("is_auth/", is_authenticated),
     path("posts/", GetPosts.as_view()),
     path("delete_post/", DeletePost.as_view()),
