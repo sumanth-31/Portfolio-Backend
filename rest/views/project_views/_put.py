@@ -7,7 +7,7 @@ import json
 
 def put(self, request: Request):
     user: User = request.user
-    request_data = request.POST
+    request_data = request.data
     project_id = request_data.get("project_id", None)
     if (project_id == None):
         return bad_request("project_id cannot be empty")
@@ -27,7 +27,6 @@ def put(self, request: Request):
         project.description = description
     if image:
         project.image = image
-    print(project)
     project.save()
     curr_project = {
         "id": project.id,
