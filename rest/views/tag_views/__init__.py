@@ -1,3 +1,2 @@
-from .delete_tag_view import *
-from .get_tags import *
-from .upload_image_view import *
+from .tag_view import TagView
+from .upload_image_view import UploadTagImage

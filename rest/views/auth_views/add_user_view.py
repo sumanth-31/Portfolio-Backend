@@ -5,7 +5,7 @@ from django.http import JsonResponse
 
 from rest.models import User
 from rest.utils import bad_request, get_user_details
-from rest.views import APIView
+from rest_framework.views import APIView
 
 
 class AddUser(APIView):
