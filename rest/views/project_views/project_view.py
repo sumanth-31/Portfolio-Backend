@@ -8,3 +8,4 @@ class ProjectView(APIView):
     from ._get import get
     from ._post import post
     from ._put import put
+    from ._delete import delete
