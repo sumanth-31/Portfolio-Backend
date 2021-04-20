@@ -2,7 +2,7 @@ import json
 from django.http import JsonResponse
 
 # Create your views here.
-from rest_framework.views import Request
+from rest_framework.request import Request
 from rest.models import Post, Collection, Tag, User
 from rest.utils import bad_request, object_to_dictionary
 from rest.constants import *  # pylint: disable=unused-wildcard-import
@@ -11,7 +11,7 @@ from rest.convertors import post_to_json
 
 def post(self, request: Request):
     user: User = request.user
-    payload = json.loads(request.body)
+    payload = request.data
     collection = payload.get("collection", DEFAULT_COLLECTION)
     tag = payload.get("tag", DEFAULT_TAG)
     privacy = payload.get("privacy", DEFAULT_PRIVACY)

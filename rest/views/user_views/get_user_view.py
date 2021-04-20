@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from rest_framework.views import APIView, Request
 from rest.models import User
-from rest.utils import bad_request, get_user_details, unauthorized_request
+from rest.utils import bad_request, unauthorized_request
+from rest.convertors import user_to_json
 
 
 class GetUser(APIView):
@@ -13,7 +14,7 @@ class GetUser(APIView):
             if user.is_anonymous:
                 return unauthorized_request("User isn't logged in. Cannot fetch self profile")
             response_data = {
-                "user": get_user_details(request, user),
+                "user": user_to_json(request, user),
             }
             return JsonResponse(response_data)
         user_id = request_data.get("user_id")
@@ -24,6 +25,6 @@ class GetUser(APIView):
         except:
             return bad_request("user not found")
         response_data = {
-            "user": get_user_details(request, user)
+            "user": user_to_json(request, user)
         }
         return JsonResponse(response_data)

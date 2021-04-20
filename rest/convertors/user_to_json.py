@@ -1,8 +1,9 @@
+from rest_framework.request import Request
 from rest.models import User
 from rest.utils import get_absolute_uri
 
 
-def get_user_details(request, user: User):
+def user_to_json(request: Request, user: User):
     user_data = {
         "id": user.id,
         "name": user.name,

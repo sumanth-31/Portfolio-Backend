@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from rest_framework.views import Request
 from rest.models import Project, User
 from rest.utils import bad_request
+from rest.convertors import project_to_json
 
 
 def post(self, request: Request):
@@ -16,17 +17,8 @@ def post(self, request: Request):
             name=name, description=description, link=link, image=image, user=user
         )
         project.save()
-        response_data = {
-            "project": {
-                "name": name,
-                "description": description,
-                "link": link,
-                "id": project.id
-            }
-        }
-        if image:
-            response_data["image"] = request.build_absolute_uri(
-                project.image.url)
+        response_project = project_to_json(request, project)
+        response_data = {"project": response_project}
         return JsonResponse(response_data)
     else:
         return bad_request("name,description,link cannot be empty")
