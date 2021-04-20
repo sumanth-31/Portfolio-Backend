@@ -8,16 +8,17 @@ from rest.utils import bad_request
 
 
 def delete(self, request: Request):
-    tag = request.GET.get("tag")
-    if tag is None:
+    request_data = request.data
+    tag_id = request_data.get("tag_id")
+    if tag_id is None:
         return bad_request("tag cannot be empty")
     try:
-        tag_obj = Tag.objects.get(name=tag)
+        tag_obj = Tag.objects.get(tag_id=tag_id)
     except:
         return bad_request("tag not found")
     tag_obj.delete()
     response_data = {
-        "tag": tag,
+        "tag": tag_id,
         "message": "Tag successfully deleted",
     }
     return JsonResponse(response_data)

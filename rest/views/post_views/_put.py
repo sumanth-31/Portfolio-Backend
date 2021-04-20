@@ -9,7 +9,7 @@ from rest.convertors import post_to_json
 
 def put(self, request: Request):
     user = request.user
-    request_data = json.loads(request.body)
+    request_data = request.data
     post_id = request_data.get("post_id")
     if not post_id:
         return bad_request("post_id cannot be empty")

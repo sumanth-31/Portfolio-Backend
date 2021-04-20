@@ -2,8 +2,9 @@ from django.http import JsonResponse
 
 from rest_framework.views import APIView, Request
 from rest_framework.permissions import IsAuthenticated
-from rest.utils import bad_request, get_user_details
+from rest.utils import bad_request
 from rest.models import User
+from rest.convertors import user_to_json
 
 
 class UploadResume(APIView):
@@ -17,7 +18,7 @@ class UploadResume(APIView):
         user.resume = resume
         user.save()
         response_data = {
-            "user": get_user_details(request, user),
+            "user": user_to_json(request, user),
             "message": "Successfully updated resume",
         }
         return JsonResponse(response_data)
