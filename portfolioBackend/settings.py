@@ -28,10 +28,9 @@ SECRET_KEY = "_kb%ad_v3gv=j4su&f%iw%()*)pjt$(%oa_2xmmetbf&)8d26i"
 TOKEN_LENGTH = 30
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1",
-                 "portfologger-backend.herokuapp.com"]
+ALLOWED_HOSTS = ["portfologger-backend.herokuapp.com"]
 
 
 # Application definition
