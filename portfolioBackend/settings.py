@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from datetime import timedelta
 import dj_database_url
+import cloudinary
+import cloudinary_storage
 from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
