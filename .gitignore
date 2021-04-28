@@ -1,6 +1,4 @@
 /.vscode
 /media
 __pycache__/
-rest/migrations/*
-!rest/migrations/__init__.py
 
