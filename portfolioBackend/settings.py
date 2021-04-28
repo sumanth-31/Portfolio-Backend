@@ -51,8 +51,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "cloudinary",
-    "cloudinary_storage",
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -62,6 +60,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "cloudinary",
+    "cloudinary_storage",
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
